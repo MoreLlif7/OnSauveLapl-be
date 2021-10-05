@@ -64,6 +64,8 @@
 {% set ko = f.taille / 1000 %}
 <td>{{ko}}
 ko</td>
+<td><a href="{{path('telechargement-fichier', {'id':f.id})}}"><i class="bi bi-download text-black"></i></a></td>
+<td><a href="{{path('ajout-fichier', {'id':f.id})}}"><i class="bi bi-trash text-black"></i></a></td>
 </tr>
 {% endfor %}
 </tbody>

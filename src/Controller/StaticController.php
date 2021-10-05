@@ -20,6 +20,20 @@ use App\Entity\Theme;
 
 class StaticController extends AbstractController
 {
+    #[Route('/telechargement-fichier/{id}',name: 'telechargement-fichier',requirements:["id"=>"\d+"])]
+    public function telechargementFichier(int $id)
+    {
+        $doctrine = $this->getDoctrine();
+        $repoFichier = $doctrine->getRepository(Fichier::class);
+        $fichier = $repoFichier->find($id);
+        if ($fichier == null){
+            $this->redirectToRoute('ajout-fichier');
+        }
+        else {
+            return $this->file($this->getParameter('file_directory').'/'.$fichier->getNom().$fichier->getOriginal());
+        }
+    }
+
     #[Route('/accueil', name: 'accueil')]
     public function accueil(): Response
     {
@@ -40,11 +54,14 @@ class StaticController extends AbstractController
 
         if($request->get('id') != null){
             $f = $doctrine->getRepository(Fichier::class)->find($request->get('id'));
-            try{
+            try {
                 $filesystem = new Filesystem();
-                if ($filesystem->exists($this->getParameter('file_directory').'/'.$fichier->getNom())){
-                    $filesystem->remove
+                if($filesystem->exists($this->getParameter('file_directory').'/'.$f->getNom())){
+                    $filesystem->remove($this->getParameter('file_directory').'/'.$f->getNom());
                 }
+
+            }catch (IOExeptionInterface $exeption){
+                $this->addFlash('notice','Erreur');
             }
         }
 
